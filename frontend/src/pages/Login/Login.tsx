@@ -77,19 +77,19 @@ export default function Login() {
             <div className="w-full">
               <CustomTextInput
                 value={email}
-                onChangeText={setEmail}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
                 placeholder="Email"
-                keyboardType="email-address"
                 className="w-full rounded-sm"
               />
             </div>
             <div className="w-full">
               <CustomTextInput
                 value={password}
-                onChangeText={setPassword}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
                 placeholder="Senha"
-                secureTextEntry
-                withVisibilityToggle
+                showPasswordToggle={true}
                 className="w-full rounded-sm"
               />
             </div>

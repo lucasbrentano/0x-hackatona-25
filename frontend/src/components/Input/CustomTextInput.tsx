@@ -1,96 +1,117 @@
-import React, { useState, ChangeEvent, FocusEvent } from "react";
-import { InputProps } from "./inputProps";
+import React, { useState } from "react";
 
-// Ícones simples em SVG para o olho (visibilidade)
-const EyeIcon = ({ visible }: { visible: boolean }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    {visible ? (
-      <>
-        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-        <circle cx="12" cy="12" r="3"></circle>
-      </>
-    ) : (
-      <>
-        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-        <line x1="2" x2="22" y1="2" y2="22"></line>
-      </>
-    )}
+interface Props {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: "text" | "email" | "password" | "number";
+  placeholder?: string;
+  label?: string;
+  className?: string;
+  showPasswordToggle?: boolean;
+  disabled?: boolean;
+}
+
+const EyeOpenIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <path strokeWidth="2" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
+const EyeClosedIcon = () => (
+  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+    <path strokeWidth="2" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
   </svg>
 );
 
 export default function CustomTextInput({
   value,
-  label,
-  onChangeText,
-  secureTextEntry = false,
-  keyboardType = "default",
+  onChange,
+  type = "text",
   placeholder,
-  withVisibilityToggle = false,
-  onBlur,
-  height = 60, // Altura padrão de 60px
-}: InputProps) {
-  const [hidePassword, setHidePassword] = useState(secureTextEntry);
-  const [isFocused, setIsFocused] = useState(false);
+  label,
+  className = "",
+  showPasswordToggle = false,
+  disabled = false,
+}: Props) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChangeText(e.target.value);
+  const handleTogglePassword = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const handleFocus = () => setIsFocused(true);
-
-  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-    setIsFocused(false);
-    if (onBlur) onBlur();
-  };
-
-  // Mapeia keyboardType para input type
-  let inputType = "text";
-  if (keyboardType === "email-address") inputType = "email";
-  else if (keyboardType === "numeric") inputType = "number";
-  if (secureTextEntry) inputType = hidePassword ? "password" : "text";
+  // Determina o tipo do input
+  const inputType = type === "password" && isPasswordVisible ? "text" : type;
 
   return (
-    <div className="w-full my-2 p-0.5">
+    <div className={`w-full ${className}`}>
       {label && (
-        <label className="block mb-1 text-gray-800 font-medium text-sm">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           {label}
         </label>
       )}
-      <div className="relative w-full">
+      
+      <div className="relative">
         <input
           type={inputType}
           value={value}
-          placeholder={isFocused ? "" : placeholder}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className="w-full px-4 bg-white rounded-lg shadow-lg border-none text-base text-gray-800 outline-none font-sans box-border"
-          style={{ height: `${height}px` }}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          autoFocus={false}
+          spellCheck={false}
           autoComplete="off"
+          inputMode={type === "email" ? "email" : type === "number" ? "numeric" : "text"}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            e.currentTarget.focus();
+          }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            e.currentTarget.focus();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.currentTarget.focus();
+          }}
+          onFocus={(e) => {
+            console.log("Input focou!");
+            e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length);
+          }}
+          style={{
+            WebkitAppearance: "none",
+            WebkitTapHighlightColor: "transparent",
+            fontSize: "16px" // Previne zoom no iOS/mobile
+          }}
+          className="
+            w-full h-[60px] px-4 
+            bg-white border border-gray-300 rounded-lg shadow-lg
+            text-base text-gray-800 
+            placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            disabled:bg-gray-100 disabled:cursor-not-allowed
+            pr-12
+            touch-manipulation
+            select-text
+            cursor-text
+          "
         />
-        {withVisibilityToggle && secureTextEntry && (
-          <span
-            onClick={() => setHidePassword(!hidePassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 select-none"
-            aria-label={hidePassword ? "Mostrar senha" : "Ocultar senha"}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && setHidePassword(!hidePassword)}
+        
+        {showPasswordToggle && type === "password" && (
+          <button
+            type="button"
+            onClick={handleTogglePassword}
+            disabled={disabled}
+            className="
+              absolute right-3 top-1/2 transform -translate-y-1/2
+              p-1 text-gray-500 hover:text-gray-700
+              focus:outline-none disabled:cursor-not-allowed
+            "
           >
-            <EyeIcon visible={!hidePassword} />
-          </span>
+            {isPasswordVisible ? <EyeClosedIcon /> : <EyeOpenIcon />}
+          </button>
         )}
       </div>
     </div>
