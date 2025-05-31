@@ -1,6 +1,7 @@
 // src/routes/index.ts
 import { Router } from 'express';
 import usuarioRoutes from './usuarioRoutes';
+import forumRoutes from './forumRoutes';
 // import feedbackRoutes from './feedbackRoutes'; // quando criar
 
 const router = Router();
@@ -8,6 +9,9 @@ const router = Router();
 // ========== ROTAS DA API ==========
 // Rotas de usuários
 router.use('/usuarios', usuarioRoutes);
+
+// Rotas de fóruns
+router.use('/foruns', forumRoutes);
 
 // Rotas de feedbacks (quando implementar)
 // router.use('/feedbacks', feedbackRoutes);
@@ -26,7 +30,7 @@ router.get('/health', (req, res) => {
 // ========== ROTA DE INFORMAÇÕES DA API ==========
 router.get('/', (req, res) => {
     res.json({
-        message: 'API de Usuários e Feedbacks',
+        message: 'API de Usuários, Fóruns e Feedbacks - Hackathon 2025',
         version: '1.0.0',
         endpoints: {
             usuarios: {
@@ -38,6 +42,17 @@ router.get('/', (req, res) => {
                 'PUT /usuarios/:id': 'Atualizar usuário',
                 'DELETE /usuarios/:id': 'Deletar usuário (admin)',
                 'PATCH /usuarios/:id/xp': 'Atualizar XP (admin)'
+            },
+            foruns: {
+                'GET /foruns': 'Listar fóruns',
+                'GET /foruns/:id': 'Obter fórum por ID',
+                'POST /foruns': 'Criar fórum (admin)',
+                'PUT /foruns/:id': 'Atualizar fórum (criador/admin)',
+                'DELETE /foruns/:id': 'Deletar fórum (criador/admin)',
+                'GET /foruns/usuario/meus-foruns': 'Obter fóruns do usuário',
+                'POST /foruns/:id/membros': 'Adicionar membro',
+                'DELETE /foruns/:id/membros/:usuarioId': 'Remover membro',
+                'PATCH /foruns/:id/status': 'Alterar status do fórum'
             },
             system: {
                 'GET /health': 'Status da API'
