@@ -26,14 +26,14 @@ export default function Welcome() {
           <div className="w-full space-y-3">
             <CustomButton
               className="w-full"
-              title="Login"
-              onPress={() => navigate("/login")}
+              title="Entrar"
+              onPress={() => navigate("/Entrar")}
               variant="primary"
             />
             <CustomButton
               className="w-full"
-              title="Register"
-              onPress={() => navigate("/register")}
+              title="Registrar"
+              onPress={() => navigate("/Registrar")}
               variant="secondary"
             />
           </div>
