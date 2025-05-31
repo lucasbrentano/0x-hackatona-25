@@ -1,5 +1,5 @@
 const color = {
-  primary: "#3498db",
+  primary: "#57BE9A",
   cardBackground: "#fff",
   colorModal: "#888",
   shadow: "rgba(0,0,0,0.2)"
