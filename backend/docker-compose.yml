@@ -1,68 +1,43 @@
-version: '3.8'
-
+# docker-compose.yml (usando porta 27018 para evitar conflitos)
 services:
-  # Aplicação Node.js
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  hackathon-api:
+    build: .
     container_name: hackathon-api
-    restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - MONGODB_URI=mongodb://admin:password123@mongo:27017/hackathon-db?authSource=admin
+      - MONGODB_URI=mongodb://admin:password123@hackathon-mongodb:27017/hackathon-db?authSource=admin
+      - JWT_SECRET=hackathon2025_super_secret_key_que_deve_ter_pelo_menos_32_caracteres_para_ser_seguro
+      - JWT_EXPIRES_IN=7d
+      - FRONTEND_URL=http://localhost:3000
     volumes:
-      # Para desenvolvimento - hot reload
       - .:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
-      - mongo
+      - hackathon-mongodb
     networks:
       - hackathon-network
+    command: npm run dev
 
-  # MongoDB
-  mongo:
-    image: mongo:7.0
+  hackathon-mongodb:
+    image: mongo:7-jammy
     container_name: hackathon-mongodb
-    restart: unless-stopped
     ports:
-      - "27018:27017"  # Externa 27018 -> Interna 27017 (padrão do MongoDB)
+      - "27018:27017"  # MUDANÇA: porta externa 27018, interna 27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password123
       MONGO_INITDB_DATABASE: hackathon-db
     volumes:
-      - mongo-data:/data/db
-      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb_data:/data/db
     networks:
       - hackathon-network
 
-  # Mongo Express - Interface web para MongoDB
-  mongo-express:
-    image: mongo-express:1.0.0
-    container_name: hackathon-mongo-express
-    restart: unless-stopped
-    ports:
-      - "8082:8081"  # Externa 8082 -> Interna 8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongo:27017/
-      ME_CONFIG_BASICAUTH: false
-    depends_on:
-      - mongo
-    networks:
-      - hackathon-network
-
-# Volumes para persistir dados
 volumes:
-  mongo-data:
-    driver: local
+  mongodb_data:
 
-# Rede para comunicação entre containers
 networks:
   hackathon-network:
     driver: bridge
