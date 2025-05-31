@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent, FocusEvent } from "react";
 import { InputProps } from "./inputProps";
-import { inputStyle } from "./inputStyle";
 
 // Ícones simples em SVG para o olho (visibilidade)
 const EyeIcon = ({ visible }: { visible: boolean }) => (
@@ -17,13 +16,15 @@ const EyeIcon = ({ visible }: { visible: boolean }) => (
   >
     {visible ? (
       <>
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
         <circle cx="12" cy="12" r="3"></circle>
       </>
     ) : (
       <>
-        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.52 21.52 0 0 1 5.66-7.19"></path>
-        <path d="M1 1l22 22"></path>
+        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+        <line x1="2" x2="22" y1="2" y2="22"></line>
       </>
     )}
   </svg>
@@ -38,6 +39,7 @@ export default function CustomTextInput({
   placeholder,
   withVisibilityToggle = false,
   onBlur,
+  height = 60, // Altura padrão de 60px
 }: InputProps) {
   const [hidePassword, setHidePassword] = useState(secureTextEntry);
   const [isFocused, setIsFocused] = useState(false);
@@ -60,10 +62,13 @@ export default function CustomTextInput({
   if (secureTextEntry) inputType = hidePassword ? "password" : "text";
 
   return (
-    <div style={inputStyle.shadowWrapper}>
-      {label && <label style={inputStyle.label}>{label}</label>}
-
-      <div style={inputStyle.inputWrapper}>
+    <div className="w-full my-2 p-0.5">
+      {label && (
+        <label className="block mb-1 text-gray-800 font-medium text-sm">
+          {label}
+        </label>
+      )}
+      <div className="relative w-full">
         <input
           type={inputType}
           value={value}
@@ -71,13 +76,14 @@ export default function CustomTextInput({
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          style={inputStyle.input}
+          className="w-full px-4 bg-white rounded-lg shadow-lg border-none text-base text-gray-800 outline-none font-sans box-border"
+          style={{ height: `${height}px` }}
           autoComplete="off"
         />
         {withVisibilityToggle && secureTextEntry && (
           <span
             onClick={() => setHidePassword(!hidePassword)}
-            style={inputStyle.visibilityToggle}
+            className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 select-none"
             aria-label={hidePassword ? "Mostrar senha" : "Ocultar senha"}
             role="button"
             tabIndex={0}

@@ -7,4 +7,5 @@ export interface InputProps {
   withVisibilityToggle?: boolean;
   label?: string;
   onBlur?: () => void;
+  height?: number;
 }

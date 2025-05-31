@@ -21,24 +21,24 @@ export default function Welcome() {
               className="w-100 h-100 object-contain"
             />
           </div>
-
+          
           {/* Botões */}
           <div className="w-full space-y-3">
             <CustomButton
               className="w-full"
-              title="Entrar"
-              onPress={() => navigate("/Entrar")}
+              title="Login"
+              onPress={() => navigate("/login")}
               variant="primary"
             />
             <CustomButton
               className="w-full"
-              title="Registrar"
-              onPress={() => navigate("/Registrar")}
+              title="Register"
+              onPress={() => navigate("/register")}
               variant="secondary"
             />
           </div>
         </div>
-
+        
         {/* Texto dos termos na parte inferior */}
         <div className="w-full max-w-sm pb-6">
           <p className="text-xs text-gray-500 font-sans text-center leading-relaxed">
