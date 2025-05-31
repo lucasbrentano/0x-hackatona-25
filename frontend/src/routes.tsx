@@ -5,6 +5,7 @@ import { AuthContext } from './AuthContext';
 
 import Welcome from './pages/Inicial/Welcome';
 import Login from './pages/Login/Login';
+import Home from './pages/Home/Home';
 
 export default function AppRoutes() {
   const { token } = useContext(AuthContext);
@@ -16,7 +17,7 @@ export default function AppRoutes() {
           <>
             <Route path="/" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Home/>} />
           </>
         ) : (
           <>

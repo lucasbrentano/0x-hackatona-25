@@ -43,6 +43,9 @@ export default function Login() {
         userID: ""
       });
 
+      // Redirecionar para a tela Home após login bem-sucedido
+      navigate("/home");
+
     } catch (error: any) {
       console.log('Erro Axios:', error.message);
       console.log('Status:', error.response?.status);
