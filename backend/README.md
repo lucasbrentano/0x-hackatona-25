@@ -1,270 +1,316 @@
 # 🚀 Hackathon 2025 - Backend API
 
-Backend Node.js + TypeScript + MongoDB + Docker para o Hackathon 2025.
+> **Sistema de Feedbacks Colaborativo com Node.js + TypeScript + MongoDB**
 
-## 🛠️ Tecnologias
+[![Tests](https://img.shields.io/badge/tests-24%20passing-brightgreen)](https://github.com/yourusername/hackathon-backend)
+[![Coverage](https://img.shields.io/badge/coverage-41.38%25-green)](https://github.com/yourusername/hackathon-backend)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 
-- **Node.js 18** + **TypeScript**
-- **Express.js** - Framework web
-- **MongoDB** + **Mongoose** - Banco de dados NoSQL
-- **Docker** + **Docker Compose** - Containerização
-- **Helmet** + **CORS** - Segurança
-- **Nodemon** - Hot reload para desenvolvimento
+## 📋 Sobre o Projeto
 
-## 📋 Pré-requisitos
+API RESTful completa para sistema de feedbacks colaborativo, desenvolvida para o Hackathon 2025. Permite gestão de usuários, fóruns, feedbacks P2P e sistema inteligente de hashtags.
 
-- [Docker](https://docs.docker.com/get-docker/) + [Docker Compose](https://docs.docker.com/compose/install/)
-- [Node.js 18+](https://nodejs.org/) (opcional, se quiser rodar sem Docker)
-- [Git](https://git-scm.com/)
+### ✨ Principais Funcionalidades
 
-## 🚀 Instalação e Execução
+- 👥 **Gestão de Usuários** - Registro, login, perfis e roles
+- 🏛️ **Sistema de Fóruns** - Criação, membros e moderação
+- 💬 **Feedbacks P2P** - Feedback entre usuários e em fóruns
+- 🏷️ **Hashtags Inteligentes** - Extração automática e trending
+- 🔐 **Autenticação JWT** - Segurança robusta
+- 📊 **Sistema de Reações** - Emojis e interações
 
-### 1. Clone o repositório
+## 🛠️ Tech Stack
 
-```bash
-git clone https://github.com/lucasbrentano/0x-hackatona-25.git
-cd backend
-```
+- **Runtime:** Node.js 18+ + TypeScript
+- **Framework:** Express.js
+- **Database:** MongoDB + Mongoose
+- **Auth:** JWT + bcrypt
+- **Tests:** Jest + Supertest (41% coverage)
+- **Security:** Helmet + CORS + Rate Limiting
+- **DevOps:** Docker + CI/CD
 
-### 2. Configurar variáveis de ambiente
+## ⚡ Quick Start
 
-```bash
-# Copiar arquivo de exemplo
-cp .env.example .env
-
-# Editar .env se necessário (opcional)
-nano .env
-```
-
-### 3. Executar com Docker (Recomendado)
+### 📦 Opção 1: Docker (Recomendado)
 
 ```bash
-# Construir e executar todos os serviços
+# Clone o repositório
+git clone https://github.com/yourusername/hackathon-backend.git
+cd hackathon-backend
+
+# Subir backend
 docker-compose up --build
 
-# Ou em background
-docker-compose up -d --build
+# ✅ Backend disponível em http://localhost:3000
 ```
 
-### 4. Verificar se está funcionando
+### 🔧 Opção 2: Desenvolvimento Local
 
-Acesse: http://localhost:3000
+#### **Pré-requisitos**
+- Node.js 18+
+- MongoDB rodando
+- npm ou yarn
 
-Você deve ver:
-```json
-{
-  "message": "🚀 Hackathon 2025 - Backend API com MongoDB",
-  "status": "running",
-  "timestamp": "2025-05-31T07:00:00.000Z",
-  "version": "1.0.0",
-  "database": "MongoDB + Mongoose",
-  "endpoints": {
-    "health": "/health",
-    "api": "/api/*",
-    "users": "/api/users"
-  }
-}
-```
-
-## 🌐 URLs e Portas
-
-| Serviço | URL | Descrição |
-|---------|-----|-----------|
-| **API** | http://localhost:3000 | API Principal |
-| **Health Check** | http://localhost:3000/health | Status da aplicação |
-| **Mongo Express** | http://localhost:8082 | Interface web do MongoDB |
-
-## 📊 Endpoints da API
-
-### Usuários
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/users` | Listar usuários (com paginação) |
-| `GET` | `/api/users/:id` | Buscar usuário por ID |
-| `POST` | `/api/users` | Criar novo usuário |
-| `PUT` | `/api/users/:id` | Atualizar usuário |
-| `DELETE` | `/api/users/:id` | Deletar usuário |
-| `PATCH` | `/api/users/:id/deactivate` | Desativar usuário (soft delete) |
-
-### Exemplos de uso
+#### **Instalação**
 
 ```bash
-# Listar usuários
-curl http://localhost:3000/api/users
+# 1. Instalar dependências
+npm install
 
-# Criar usuário
-curl -X POST http://localhost:3000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"João Silva","email":"joao@email.com","age":25}'
+# 2. Configurar ambiente
+cp .env.example .env
+# Editar .env com suas configurações
 
-# Buscar usuário por ID
-curl http://localhost:3000/api/users/USER_ID
+# 3. Iniciar backend
+npm run dev
 
-# Listar com paginação
-curl "http://localhost:3000/api/users?limit=5&page=1"
-
-# Filtrar usuários ativos
-curl "http://localhost:3000/api/users?active=true"
-
-# Atualizar usuário
-curl -X PUT http://localhost:3000/api/users/USER_ID \
-  -H "Content-Type: application/json" \
-  -d '{"name":"João Santos","age":26}'
-
-# Desativar usuário
-curl -X PATCH http://localhost:3000/api/users/USER_ID/deactivate
+# ✅ Backend rodando em http://localhost:3000
 ```
 
-## 📦 Scripts Disponíveis
+#### **Variáveis de Ambiente (.env)**
 
+```env
+# Servidor
+PORT=3000
+NODE_ENV=development
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/hackathon
+
+# JWT
+JWT_SECRET=seu-jwt-secret-super-seguro
+JWT_EXPIRES_IN=7d
+
+# Rate Limiting
+RATE_LIMIT_WINDOW=15
+RATE_LIMIT_MAX_REQUESTS=100
+```
+
+## 📖 API Base
+
+### **🔍 Health Check**
 ```bash
-# Desenvolvimento
-npm run dev          # Executar com hot reload
-npm run build        # Compilar TypeScript
-npm start            # Executar build compilado
-
-# Docker
-npm run docker:build # Construir images
-npm run docker:up    # Executar em background
-npm run docker:dev   # Executar com logs
-npm run docker:down  # Parar containers
-npm run docker:clean # Parar e limpar volumes
-npm run docker:logs  # Ver logs da aplicação
-
-# Formatação
-npm run prettier     # Formatar código
+curl http://localhost:3000/api/v1/health
 ```
 
-## 🗂️ Estrutura do Projeto
+### **📚 Documentação Completa**
+```bash
+curl http://localhost:3000/api/v1
+```
+
+### **🚀 Base URL**
+```
+http://localhost:3000/api/v1
+```
+
+## 🧪 Executar Testes
+
+### **🏃‍♂️ Todos os Testes**
+```bash
+npm test
+```
+
+### **📊 Testes com Cobertura**
+```bash
+npm run test:coverage
+
+# 📈 Relatório visual em: coverage/lcov-report/index.html
+```
+
+### **👀 Modo Watch (Desenvolvimento)**
+```bash
+npm run test:watch
+```
+
+### **🎯 Resultados dos Testes**
+```
+✅ 24 testes passando
+📊 41.38% de cobertura
+⚡ Execução em ~13s
+🔬 5 suites de teste:
+  - 👥 Usuários (registro, login, perfil)
+  - 🏛️ Fóruns (criação, membros, permissões)  
+  - 💬 Feedbacks (P2P, reações, hashtags)
+  - 🏷️ Hashtags (populares, trending, busca)
+  - ❤️ Health Check (sistema, rotas)
+```
+
+## 📁 Estrutura do Projeto
 
 ```
 backend/
 ├── src/
-│   ├── config/
-│   │   └── database.ts          # Configuração MongoDB
-│   ├── controllers/
-│   │   └── userController.ts    # Lógica de usuários
-│   ├── models/
-│   │   └── User.ts              # Schema do usuário
-│   ├── routes/
-│   │   └── userRoutes.ts        # Rotas dos usuários
-│   ├── middleware/              # Middlewares customizados
-│   ├── types/                   # Tipos TypeScript
-│   └── index.ts                 # Arquivo principal
-├── docker/
-│   └── mongo-init.js            # Script de inicialização do MongoDB
-├── docker-compose.yml           # Configuração dos containers
-├── Dockerfile                   # Image da aplicação
-├── package.json                 # Dependências e scripts
-├── tsconfig.json               # Configuração TypeScript
-├── .env                        # Variáveis de ambiente
-├── .gitignore                  # Arquivos ignorados pelo Git
-└── README.md                   # Este arquivo
+│   ├── controllers/     # 🎮 Controladores da API
+│   ├── models/          # 💾 Modelos Mongoose
+│   ├── routes/          # 🛣️ Rotas Express
+│   ├── services/        # ⚙️ Lógica de negócio
+│   ├── middleware/      # 🔒 Middlewares (auth, validation)
+│   ├── types/           # 📝 Definições TypeScript
+│   ├── config/          # ⚙️ Configurações
+│   └── app.ts           # 🚀 Aplicação Express
+├── tests/
+│   ├── integration/     # 🧪 Testes de integração
+│   ├── helpers/         # 🛠️ Utilitários de teste
+│   └── setup.ts         # ⚙️ Configuração de testes
+├── docker-compose.yml   # 🐳 Orquestração
+├── Dockerfile          # 📦 Container de produção
+└── package.json        # 📋 Dependências e scripts
 ```
 
-## 🛠️ Comandos Docker Úteis
+## 🚀 Scripts Disponíveis
 
 ```bash
-# Ver containers rodando
-docker-compose ps
+# Desenvolvimento
+npm run dev          # Inicia com nodemon
+npm start           # Inicia com ts-node
+npm run build       # Compila TypeScript
+npm run prod        # Inicia versão compilada
 
-# Ver logs de um serviço específico
-docker-compose logs -f app
-docker-compose logs -f mongo
+# Testes
+npm test            # Executa testes
+npm run test:watch  # Modo watch
+npm run test:coverage # Com cobertura
 
-# Executar comandos dentro do container
-docker-compose exec app sh
-docker-compose exec mongo mongosh
+# Qualidade
+npm run lint        # ESLint
+npm run prettier    # Formatação
 
-# Reiniciar um serviço
-docker-compose restart app
-
-# Parar e remover tudo
-docker-compose down -v
-
-# Rebuild sem cache
-docker-compose build --no-cache
+# Docker
+npm run docker:build    # Build da imagem
+npm run docker:up      # Subir containers
+npm run docker:down    # Parar containers
+npm run docker:logs    # Ver logs
 ```
 
-## 🔧 Solução de Problemas
+## 🌐 Endpoints da API
 
-### Erro: "Port already in use"
+### **👥 Usuários**
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| `POST` | `/usuarios/registro` | Criar conta | ❌ |
+| `POST` | `/usuarios/login` | Fazer login | ❌ |
+| `GET` | `/usuarios/perfil` | Dados do usuário logado | ✅ |
+| `PATCH` | `/usuarios/:id/xp` | Atualizar XP (admin) | ✅ |
 
+### **🏛️ Fóruns**
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| `GET` | `/foruns` | Listar fóruns | ✅ |
+| `POST` | `/foruns` | Criar fórum (admin) | ✅ |
+| `GET` | `/foruns/:id` | Detalhes do fórum | ✅ |
+| `GET` | `/foruns/usuario/meus-foruns` | Meus fóruns | ✅ |
+| `POST` | `/foruns/:id/membros` | Adicionar membro | ✅ |
+
+### **💬 Feedbacks**
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| `GET` | `/feedbacks` | Listar feedbacks | ✅ |
+| `POST` | `/feedbacks/p2p` | Feedback entre usuários | ✅ |
+| `POST` | `/feedbacks/forum` | Feedback em fórum | ✅ |
+| `GET` | `/feedbacks/usuario/meus-feedbacks` | Meus feedbacks | ✅ |
+| `POST` | `/feedbacks/:id/reacoes` | Adicionar reação (👍😊) | ✅ |
+| `GET` | `/feedbacks/hashtag/:hashtag` | Buscar por hashtag | ✅ |
+
+### **🏷️ Hashtags**
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| `GET` | `/hashtags/populares` | Top hashtags | ✅ |
+| `GET` | `/hashtags/trending` | Hashtags trending | ✅ |
+| `GET` | `/hashtags/buscar?q=termo` | Buscar hashtags | ✅ |
+| `GET` | `/hashtags/admin/estatisticas` | Stats (admin) | ✅ |
+
+### **❤️ Sistema**
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| `GET` | `/health` | Status da API | ❌ |
+| `GET` | `/` | Documentação | ❌ |
+
+## 🔐 Autenticação
+
+A API usa **JWT (JSON Web Tokens)**. Incluir token no header das requisições autenticadas:
+
+```
+Authorization: Bearer <token>
+```
+
+### **🎭 Roles de Usuário**
+- `usuario` - Usuário padrão
+- `admin` - Administrador (pode criar fóruns)
+- `super_admin` - Super administrador
+
+## 📡 Formato das Respostas
+
+### **✅ Sucesso**
+```json
+{
+  "success": true,
+  "data": { /* dados */ },
+  "message": "Operação realizada com sucesso"
+}
+```
+
+### **❌ Erro**
+```json
+{
+  "success": false,
+  "message": "Descrição do erro",
+  "errors": [ /* detalhes (opcional) */ ]
+}
+```
+
+### **📄 Listas Paginadas**
+```json
+{
+  "success": true,
+  "data": {
+    "feedbacks": [ /* itens */ ],
+    "total": 50,
+    "page": 1,
+    "totalPages": 5
+  }
+}
+```
+
+## 📊 Monitoramento
+
+### **❤️ Health Check**
 ```bash
-# Verificar o que está usando as portas
-sudo lsof -i :3000
-sudo lsof -i :27018
-sudo lsof -i :8082
-
-# Parar containers conflitantes
-docker stop $(docker ps -q)
+GET /api/v1/health
 ```
 
-### Erro de autenticação MongoDB
-
-Verifique se a `MONGODB_URI` no `.env` está correta:
-```env
-MONGODB_URI=mongodb://admin:password123@mongo:27017/hackathon-db?authSource=admin
+**Resposta:**
+```json
+{
+  "status": "OK",
+  "message": "API funcionando corretamente",
+  "timestamp": "2025-05-31T16:45:30.447Z",
+  "uptime": 123.456,
+  "environment": "development"
+}
 ```
-
-### Container não inicia
-
-```bash
-# Ver logs detalhados
-docker-compose logs
-
-# Rebuild completo
-docker-compose down -v
-docker-compose build --no-cache
-docker-compose up
-```
-
-### Dados não persistem
-
-Verifique se o volume do MongoDB está configurado:
-```bash
-# Ver volumes
-docker volume ls
-
-# Se necessário, recriar
-docker-compose down -v
-docker-compose up --build
-```
-
-## 🌟 Funcionalidades Implementadas
-
-- ✅ CRUD completo de usuários
-- ✅ Validações robustas (email único, campos obrigatórios)
-- ✅ Paginação e filtros
-- ✅ Soft delete (desativação)
-- ✅ Timestamps automáticos
-- ✅ Conexão segura com MongoDB
-- ✅ Interface web para banco de dados
-- ✅ Hot reload para desenvolvimento
-- ✅ Containerização completa
-- ✅ Logs estruturados
-- ✅ Health check
-- ✅ Tratamento de erros
-
-## 🚀 Próximos Passos
-
-- [ ] Validações avançadas
-- [ ] Testes automatizados
-- [ ] Documentação da API (Swagger)
 
 ## 🤝 Contribuição
 
 1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
-3. Commit suas mudanças: `git commit -m 'feat: nova funcionalidade'`
-4. Push para a branch: `git push origin feature/nova-funcionalidade`
+2. Crie uma branch (`git checkout -b feature/nova-funcionalidade`)
+3. Commit suas mudanças (`git commit -m 'Add: nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
 
-## 👥 Equipe
+## 📄 Licença
 
-**Equipe 0x** - Hackatona 2025 Engenharia de Software PUCRS
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👨‍💻 Autoria
+**Equipe 0x**
 
 ---
 
-**Feito com ❤️ para a Hackatona 2025 - Engenharia de Software PUCRS**
+<div align="center">
+
+**🏆 Desenvolvido para o Hackathon ES PUCRS 2025 🏆**
+
+⭐ Se este projeto te ajudou, deixe uma estrela!
+
+</div>
