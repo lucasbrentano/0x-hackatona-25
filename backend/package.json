@@ -1,0 +1,52 @@
+{
+    "name": "hackathon-backend",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "description": "Backend para Hackathon 2025 - Node.js + TypeScript + MongoDB",
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "helmet": "^7.1.0",
+        "dotenv": "^16.3.1"
+    },
+    "devDependencies": {
+        "@types/node": "latest",
+        "@types/express": "^4.17.21",
+        "@types/cors": "^2.8.17",
+        "nodemon": "latest",
+        "prettier": "latest",
+        "prettify": "latest",
+        "ts-node": "latest",
+        "typescript": "latest"
+    },
+    "scripts": {
+        "prettier": "prettier --write \"**/*.ts\" \"**/*.js\" \"**/*.json\" \"**/*.css\"",
+        "prettify": "pretty-quick --staged",
+        "dev": "nodemon src/index.ts",
+        "start": "ts-node src/index.ts",
+        "build": "tsc",
+        "prod": "node dist/index.js",
+        "docker:build": "docker-compose build",
+        "docker:up": "docker-compose up -d",
+        "docker:dev": "docker-compose up --build",
+        "docker:down": "docker-compose down",
+        "docker:clean": "docker-compose down -v",
+        "docker:logs": "docker-compose logs -f app"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn prettify"
+        }
+    },
+    "keywords": [
+        "node",
+        "ts",
+        "typescript",
+        "express",
+        "api",
+        "hackathon"
+    ],
+    "author": {
+        "name": "Lucas Brentano"
+    }
+}
