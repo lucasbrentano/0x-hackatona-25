@@ -98,8 +98,6 @@ usuarioSchema.methods.isSuperAdmin = function(this: IUsuario): boolean {
 };
 
 // Índices
-usuarioSchema.index({ email: 1 });
-usuarioSchema.index({ role: 1 });
 
 // Exportar o modelo
 export const Usuario = model<IUsuario>('usuarios', usuarioSchema);

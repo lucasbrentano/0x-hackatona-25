@@ -146,7 +146,6 @@ forumSchema.index({ projeto: 1 });
 forumSchema.index({ status: 1 });
 forumSchema.index({ criador: 1 }); // Corrigido de admin_criador para criador
 forumSchema.index({ data_criacao: -1 });
-forumSchema.index({ nome: 1 });
 
 // Exportar o modelo
 export const Forum = model<IForum>('foruns', forumSchema);

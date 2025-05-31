@@ -2,164 +2,120 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
 import compression from 'compression';
-import connectDB from './config/database';
-import routes from './routes';
+import morgan from 'morgan';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
-// ========== CONECTAR AO BANCO DE DADOS ==========
-connectDB();
-
-// ========== MIDDLEWARES DE SEGURANÇA ==========
-// Helmet para headers de segurança
+// Middlewares básicos
 app.use(helmet());
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // máximo 100 requests por IP por janela de tempo
-    message: {
-        success: false,
-        message: 'Muitas tentativas. Tente novamente em 15 minutos.'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use('/api/', limiter);
-
-// Rate limiting mais restritivo para login
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // máximo 5 tentativas de login por IP
-    message: {
-        success: false,
-        message: 'Muitas tentativas de login. Tente novamente em 15 minutos.'
-    },
-    skipSuccessfulRequests: true,
-});
-app.use('/api/v1/usuarios/login', loginLimiter);
-
-// ========== MIDDLEWARES GERAIS ==========
-// CORS
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-    optionsSuccessStatus: 200
-}));
-
-// Compressão
 app.use(compression());
+app.use(cors());
+app.use(express.json());
 
-// Logging
-if (process.env.NODE_ENV === 'production') {
-    app.use(morgan('combined'));
-} else {
-    app.use(morgan('dev'));
+// Logging apenas em desenvolvimento
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
 
-// Parse JSON e URL-encoded
-app.use(express.json({
-    limit: '10mb',
-    type: 'application/json'
-}));
-app.use(express.urlencoded({
-    extended: true,
-    limit: '10mb'
-}));
+// Importar suas rotas reais
+try {
+  // Tentar importar as rotas - ajustar conforme sua estrutura
+  const usuarioRoutes = require('./routes/usuarioRoutes');
+  const forumRoutes = require('./routes/forumRoutes');
+  const feedbackRoutes = require('./routes/feedbackRoutes');
+  const hashtagRoutes = require('./routes/hashtagRoutes');
 
-// ========== ROTAS ==========
-app.use('/api/v1', routes);
+  // Usar as rotas (ajustar se usam export default)
+  app.use('/api/v1/usuarios', usuarioRoutes.default || usuarioRoutes);
+  app.use('/api/v1/foruns', forumRoutes.default || forumRoutes);
+  app.use('/api/v1/feedbacks', feedbackRoutes.default || feedbackRoutes);
+  app.use('/api/v1/hashtags', hashtagRoutes.default || hashtagRoutes);
 
-// ========== MIDDLEWARE DE TRATAMENTO DE ERROS 404 ==========
+  console.log('✅ Rotas carregadas com sucesso');
+} catch (error) {
+  console.log('⚠️ Erro ao carregar rotas:', error.message);
+}
+
+// Health check
+app.get('/api/v1/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'API funcionando corretamente',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Documentação da API
+app.get('/api/v1', (req, res) => {
+  res.json({
+    message: 'API de Usuários, Fóruns, Feedbacks e Hashtags - Hackathon 2025',
+    version: '1.0.0',
+    endpoints: {
+      usuarios: {
+        'POST /usuarios/registro': 'Criar novo usuário',
+        'POST /usuarios/login': 'Fazer login',
+        'GET /usuarios/perfil': 'Obter perfil do usuário logado',
+        'GET /usuarios': 'Listar usuários (admin)',
+        'PATCH /usuarios/:id/xp': 'Atualizar XP (admin)'
+      },
+      foruns: {
+        'GET /foruns': 'Listar fóruns',
+        'POST /foruns': 'Criar fórum (admin)',
+        'GET /foruns/:id': 'Obter fórum por ID',
+        'POST /foruns/:id/membros': 'Adicionar membro',
+        'GET /foruns/usuario/meus-foruns': 'Meus fóruns'
+      },
+      feedbacks: {
+        'GET /feedbacks': 'Listar feedbacks',
+        'POST /feedbacks/forum': 'Criar feedback de fórum',
+        'POST /feedbacks/p2p': 'Criar feedback P2P',
+        'POST /feedbacks/:id/reacoes': 'Adicionar reação',
+        'GET /feedbacks/hashtag/:hashtag': 'Buscar por hashtag'
+      },
+      hashtags: {
+        'GET /hashtags/populares': 'Hashtags populares',
+        'GET /hashtags/trending': 'Hashtags trending',
+        'GET /hashtags/admin/estatisticas': 'Estatísticas (admin)'
+      },
+      system: {
+        'GET /health': 'Status da API',
+        'GET /': 'Informações da API'
+      }
+    }
+  });
+});
+
+// Middleware para rotas não encontradas
 app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Rota ${req.originalUrl} não encontrada`,
-        availableRoutes: {
-            base: '/api/v1',
-            usuarios: '/api/v1/usuarios',
-            health: '/api/v1/health'
-        }
-    });
-});
-
-// ========== MIDDLEWARE DE TRATAMENTO DE ERROS GLOBAIS ==========
-app.use((error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Error Stack:', error.stack);
-    console.error('Error Message:', error.message);
-    console.error('Request URL:', req.url);
-    console.error('Request Method:', req.method);
-    console.error('Request Body:', req.body);
-
-    // Erro de validação do Mongoose
-    if (error.name === 'ValidationError') {
-        res.status(400).json({
-            success: false,
-            message: 'Dados inválidos',
-            errors: Object.values((error as any).errors).map((err: any) => ({
-                field: err.path,
-                message: err.message
-            }))
-        });
-        return;
+  res.status(404).json({
+    success: false,
+    message: `Rota ${req.originalUrl} não encontrada`,
+    availableRoutes: {
+      base: '/api/v1',
+      usuarios: '/api/v1/usuarios',
+      foruns: '/api/v1/foruns',
+      feedbacks: '/api/v1/feedbacks',
+      hashtags: '/api/v1/hashtags',
+      health: '/api/v1/health'
     }
-
-    // Erro de duplicata do MongoDB (email único)
-    if (error.name === 'MongoServerError' && (error as any).code === 11000) {
-        const field = Object.keys((error as any).keyPattern)[0];
-        res.status(400).json({
-            success: false,
-            message: `${field} já está em uso`
-        });
-        return;
-    }
-
-    // Erro de cast do MongoDB (ID inválido)
-    if (error.name === 'CastError') {
-        res.status(400).json({
-            success: false,
-            message: 'ID inválido'
-        });
-        return;
-    }
-
-    // Erro padrão
-    res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor',
-        ...(process.env.NODE_ENV === 'development' && {
-            error: error.message,
-            stack: error.stack
-        })
-    });
+  });
 });
 
-const PORT = process.env.PORT || 3000;
-
-// ========== INICIAR SERVIDOR ==========
-const server = app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    console.log(`📱 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🌐 URL: http://localhost:${PORT}`);
-    console.log(`📋 Health Check: http://localhost:${PORT}/api/v1/health`);
-});
-
-// ========== GRACEFUL SHUTDOWN ==========
-process.on('SIGTERM', () => {
-    console.log('SIGTERM received. Shutting down gracefully...');
-    server.close(() => {
-        console.log('Process terminated');
-    });
-});
-
-process.on('SIGINT', () => {
-    console.log('SIGINT received. Shutting down gracefully...');
-    server.close(() => {
-        console.log('Process terminated');
-    });
+// Middleware de tratamento de erros
+app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Erro:', error);
+  
+  res.status(error.status || 500).json({
+    success: false,
+    message: error.message || 'Erro interno do servidor',
+    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+  });
 });
 
 export default app;
