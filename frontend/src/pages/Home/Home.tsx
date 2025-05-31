@@ -1,58 +1,43 @@
 import React, { useState } from 'react';
-import HomeBottom from '../../components/Bottom/HomeBottom'; // Ajuste o caminho conforme sua estrutura
-import HomeImage from '../../assets/Home.png';
+import FeedbackBox from '../../components/Feedback';
+import HomeBottom from '../../components/Bottom/HomeBottom';
+import { User } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState(0);
 
-  // Função para renderizar conteúdo baseado na aba selecionada
-  const renderContent = () => {
-    switch (selectedTab) {
-      case 0: // Home
-        return (
-          <div className="w-full max-w-md">
-            <img
-              src={HomeImage}
-              alt="Home Screen Content"
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
-          </div>
-        );
-      case 1: // Add
-        return (
-          <div className="w-full max-w-md text-center">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Adicionar Conteúdo</h2>
-              <p className="text-gray-600">Funcionalidade de adicionar em desenvolvimento...</p>
-            </div>
-          </div>
-        );
-      case 2: // Messages
-        return (
-          <div className="w-full max-w-md text-center">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Mensagens</h2>
-              <p className="text-gray-600">Suas mensagens aparecerão aqui...</p>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  const feedbacks = [
+    { userName: 'User01', text: 'Maecenas non commodo nisi. Integer hendrerit est at ullamcorper tincidunt. Sed lacinia accumsan sapien.' },
+    { userName: 'AnonymousUser1005', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nibh.' },
+    { userName: 'User02', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet nibh tincidunt.' },
+    { userName: 'AnonymousUser0066', text: 'Maecenas non commodo nisi. Integer hendrerit est at ullamcorper tincidunt. Sed lacinia accumsan sapien.' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Conteúdo principal da tela */}
-      <div className="flex-1 flex items-center justify-center p-4 pb-20">
-        {renderContent()}
+    <div className="flex flex-col min-h-screen bg-gray-100 relative">
+      {/* Top Bar */}
+      <div className="flex justify-between items-center p-4 border-b border-gray-300 bg-white shadow-sm">
+        <h1 className="text-lg font-semibold text-gray-700">Town Square</h1>
+        <button>
+          <User size={24} className="text-gray-700" />
+        </button>
       </div>
-      
-      {/* Componente HomeBottom fixo na parte inferior */}
-      <HomeBottom
-        selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
-      />
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <button className="bg-emerald-400 text-white font-semibold px-4 py-2 rounded-full mb-4">
+          Filtros
+        </button>
+
+        <div className="flex flex-col gap-4 items-center">
+          {feedbacks.map((feedback, index) => (
+            <FeedbackBox key={index} userName={feedback.userName} text={feedback.text} />
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <HomeBottom selectedTab={selectedTab} onTabChange={setSelectedTab} />
     </div>
   );
 };

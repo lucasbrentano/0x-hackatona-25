@@ -15,7 +15,7 @@ const HomeBottom: React.FC<HomeBottomProps> = ({ selectedTab, onTabChange }) => 
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 safe-area-bottom">
-      <div className="flex justify-around items-center w-full px-4 py-4">
+      <div className="flex justify-center items-center w-full py-2 gap-2 sm:gap-4">
         {tabs.map((tab, index) => {
           const IconComponent = tab.icon;
           const isSelected = selectedTab === index;
@@ -24,14 +24,15 @@ const HomeBottom: React.FC<HomeBottomProps> = ({ selectedTab, onTabChange }) => 
             <button
               key={index}
               onClick={() => onTabChange(index)}
-              className={`flex flex-col items-center justify-center p-4 transition-all duration-200 ${
+              className={`flex flex-col items-center justify-center p-2 sm:p-3 transition-all duration-200 ${
                 isSelected
                   ? 'text-black'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
+              aria-label={tab.label}
             >
               <IconComponent
-                size={28}
+                size={24}
                 strokeWidth={isSelected ? 2.5 : 2}
               />
             </button>
